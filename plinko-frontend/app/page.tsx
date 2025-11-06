@@ -24,7 +24,7 @@ export default function Home() {
   async function createRound() {
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/api/rounds/commit");
+      const res = await axios.post("https://pfa-zhuf.onrender.com/api/rounds/commit");
       setRoundId(res.data.roundId);
       setNonce(res.data.nonce);
       toast.success("✅ Round Created Successfully!");
@@ -43,7 +43,7 @@ export default function Home() {
       setLoading(true);
       setStatus("Dropping ball...");
       const res = await axios.post(
-        `http://localhost:5000/api/rounds/${roundId}/start`,
+        `https://pfa-zhuf.onrender.com/api/rounds/${roundId}/start`,
         { clientSeed, dropColumn, betCents: 100 }
       );
       setPath(res.data.path);
@@ -68,7 +68,7 @@ export default function Home() {
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:5000/api/rounds/${roundId}/reveal`
+        `https://pfa-zhuf.onrender.com/api/rounds/${roundId}/reveal`
       );
       const serverSeed = res.data.serverSeed;
 
