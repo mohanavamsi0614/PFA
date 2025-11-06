@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
-export default function Verify() {
+// ✅ Inner component that uses useSearchParams
+function VerifyInner() {
   const params = useSearchParams();
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -18,11 +19,16 @@ export default function Verify() {
   useEffect(() => {
     async function verify() {
       if (!serverSeed || !clientSeed || !nonce) return;
-      const res = await axios.get("http://localhost:5000/api/rounds/verify", {
-        params: { serverSeed, clientSeed, nonce, dropColumn },
-      });
-      setResult(res.data);
-      setLoading(false);
+      try {
+        const res = await axios.get("http://localhost:5000/api/rounds/verify", {
+          params: { serverSeed, clientSeed, nonce, dropColumn },
+        });
+        setResult(res.data);
+      } catch (err) {
+        console.error("Verification error:", err);
+      } finally {
+        setLoading(false);
+      }
     }
     verify();
   }, [serverSeed, clientSeed, nonce, dropColumn]);
@@ -58,7 +64,9 @@ export default function Verify() {
             ✅ Verified — Game was Provably Fair!
           </motion.p>
         ) : (
-          <p className="text-red-400 text-xl mt-4 font-bold">❌ Verification Failed</p>
+          <p className="text-red-400 text-xl mt-4 font-bold">
+            ❌ Verification Failed
+          </p>
         )}
       </motion.div>
 
@@ -69,5 +77,21 @@ export default function Verify() {
         🔁 Back to Game
       </button>
     </div>
+  );
+}
+
+// ✅ Wrap it inside a Suspense boundary
+export default function VerifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-white text-center min-h-screen flex flex-col justify-center items-center bg-black">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-red-500 mb-6"></div>
+          <p className="text-xl text-gray-400">Loading verifier...</p>
+        </div>
+      }
+    >
+      <VerifyInner />
+    </Suspense>
   );
 }
