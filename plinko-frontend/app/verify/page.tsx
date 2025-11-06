@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic"; // ✅ disables static pre-rendering
 
 import { Suspense, useEffect, useState } from "react";
 import axios from "axios";
