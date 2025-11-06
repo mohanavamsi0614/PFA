@@ -21,7 +21,7 @@ function VerifyInner() {
     async function verify() {
       if (!serverSeed || !clientSeed || !nonce) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/rounds/verify", {
+        const res = await axios.get("https://pfa-zhuf.onrender.com/api/rounds/verify", {
           params: { serverSeed, clientSeed, nonce, dropColumn },
         });
         setResult(res.data);
